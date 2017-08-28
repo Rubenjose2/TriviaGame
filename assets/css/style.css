@@ -11,3 +11,12 @@ body {
     font-weight: bold;
     margin: 10px 10px;
 }
+
+.start {
+    width: 100%;
+    height: 180px;
+    background-color: white;
+    border-radius: 30px;
+    font-size: 30px;
+    padding: 30px;
+}

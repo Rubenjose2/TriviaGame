@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <form>
+            <legend>Form title</legend>
+            <div class="question-container">
+
+            </div>
+
+            <button class="btn btn-primary">Submit</button>
+        </form>
+
+
+
+    </div>
+
+
+
+
+    <script>
+        var questions = [{
+            quiz: "Great Whites and Hammerheads are what type of animals?",
+            options: ["sharks", "Elephans", "dogs"],
+            correct: 0
+        }, {
+            quiz: " How many legs does a spider have??",
+            options: ["10", "4", "8", "6"],
+            correct: 2
+        }]
+        var pre_html = '<label class="radio-inline">';
+
+
+
+
+        for (var i = 0; i < questions.length; i++) {
+            var question_label = $("<div>");
+            question_label.addClass("question");
+            question_label.text(questions[i].quiz);
+            question_label.attr('id', i);
+            $(".question-container").append("1" + question_label);
+        }
+
+        var options_labels = $("<input>");
+        options_labels.attr("type", "radio");
+        options_labels.text(questions[0].options[1]);
+        $("#0").append(options_labels);
+
+
+        ////////////////////////////////////////////////////////////
+        $("button").on("click", function(event) {
+            event.preventDefault();
+            var value_answare = $('input[name="optradio"]:checked').val();
+            var value_answare2 = $('input[name="2"]:checked').val();
+            console.log(value_answare);
+            console.log(value_answare2);
+        });
+    </script>
+</body>
+
+</html>

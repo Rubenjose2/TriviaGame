@@ -49,7 +49,7 @@ var html_pre_question = '<label class="radio-inline"><input type = "radio" name 
 console.log(questions.length);
 console.log(questions);
 
-////Functions
+////Functions to create every answare options
 function options(questions, num_question) {
     answares = questions.options;
     for (var j = 0; j < answares.length; j++) {
@@ -86,17 +86,8 @@ function count() {
 function start() {
     intervalId = setInterval(count, 1000);
 }
-start();
+
 // END FUNCTION CLOCKWATCH////////////////
-
-
-
-
-
-
-
-
-
 
 
 
@@ -104,12 +95,45 @@ start();
 
 ///Should be an array with the Questions , options , and correct answare, most like a object
 /// This part for loop to create the questions 
-for (var i = 0; i < questions.length; i++) {
-    $(".question_container").append('<div class= "question" id="' + i + '" >' + questions[i].quiz + "</div>");
-    options(questions[i], i);
-
+function start_trivia() {
+    /////start the clock////
+    start();
+    /////creation of the questions 
+    for (var i = 0; i < questions.length; i++) {
+        var question_count = i + 1;
+        var question_label = $("<div>");
+        question_label.addClass("question");
+        question_label.text(questions[i].quiz);
+        question_label.attr('id', question_count);
+        $(".question_container").append(question_label);
+        ////call the function to create the optional answares
+        options(questions[i], question_count);
+    }
 }
+//////// Creating the Start Button////////
+var start_button = $("<button>");
+start_button.addClass("btn btn-default");
+start_button.text("PLAY!!!!");
+$("#start_button").html(start_button);
+//////////////////////////////////////////
 
+//Button created on the beginin , call the function to star the game//////// 
+$("button").on("click", function(event) {
+    $("#start_end_container").remove();
+    start_trivia();
+    $(".question_container").append('<div></div><button id="submit" class="btn btn-primary">Submit</button></div>');
+});
+/////////////////////////////////////
+
+
+$("#submit").on("click", function(event) {
+    event.preventDefault();
+    var value_answare = $('input[name="1"]:checked').val();
+    console.log(value_answare);
+
+});
+//Here the Trivia get started
+// start_trivia();
 ///This part to receive the answares
 
 
