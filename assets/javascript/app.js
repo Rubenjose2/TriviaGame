@@ -2,59 +2,65 @@
 var questions = [{
         quiz: "Great Whites and Hammerheads are what type of animals?",
         options: ["sharks", "Elephans", "dogs"],
-        correct: 0
+        correct: "sharks"
     },
     {
         quiz: " How many legs does a spider have??",
         options: ["10", "4", "8", "6"],
-        correct: 2
+        correct: "8"
     }, {
         quiz: " What is the name of the pirate in Peter Pan?",
         options: ["Alice", "Capitan Hook", "Donal"],
-        correct: 1
+        correct: "Capitan Hook"
     }, {
         quiz: " How many rings make up the symbol of the Olympic Games?",
         options: ["5", "10", "9", "12"],
-        correct: 0
+        correct: "5"
     }, {
         quiz: " According to the Dr. Seuss book, who stole Christmas?",
-        options: ["The joker", "The Grinch.", "The Elf", "Mrs Santa Claus"],
-        correct: 1
+        options: ["The joker", "The Grinch", "The Elf", "Mrs Santa Claus"],
+        correct: "The Grinch"
     }, {
         quiz: " In which continent is the country of Egypt found?",
         options: ["Las Vegas", "Unided States", "South America", "Africa", "Europe", "Tokio"],
-        correct: 3
+        correct: "Africa"
     }, {
         quiz: " What is a brontosaurus?",
         options: ["A dinosaur", "a Food Plate", "A movie", "An Animal"],
-        correct: 0
+        correct: "A dinosaur"
     }, {
         quiz: " How many grams are there in a kilogram?",
         options: ["1", "1500", "3.49", "1000", "10", "100"],
-        correct: 3
+        correct: "1000"
     }, {
         quiz: " What's the colored part of the human eye called?",
         options: ["Retina", "Pupil", "Iris"],
-        correct: 2
+        correct: "Iris"
     }
 
 ];
 
 
-var correct = 0;
-var incorrect = 0;
+var corrects = 0;
+var incorrects = 0;
+var blanks = 0;
 var answares = [];
-var time = 60;
-var html_pre_question = '<label class="radio-inline"><input type = "radio" name ="';
-console.log(questions.length);
-console.log(questions);
+var time = 120;
+var results = [];
 
 ////Functions to create every answare options
 function options(questions, num_question) {
     answares = questions.options;
     for (var j = 0; j < answares.length; j++) {
-        $(html_pre_question + num_question + '" ' + "value =" +
-            answares[j] + ">" + answares[j] + "</label>").insertAfter("#" + num_question);
+        var options_labels = $("<label>");
+        options_labels.addClass("radio-inline");
+        var option_buttoms = $("<input>");
+        option_buttoms.attr("type", "radio");
+        option_buttoms.attr("name", num_question);
+        option_buttoms.attr("value", answares[j]);
+        options_labels.append(option_buttoms);
+        options_labels.append(answares[j]);
+        options_labels.insertAfter("#" + num_question);
     }
 }
 
@@ -89,9 +95,53 @@ function start() {
 
 // END FUNCTION CLOCKWATCH////////////////
 
+// Function Evaluate Answares
+function evaluate(questions, results) {
+    var answare_key = [];
 
+    // This section make an array with all the answares keys
+    for (var x = 0; x < questions.length; x++) {
+        answare_key.push(questions[x].correct);
+    }
+    // This section assign the empty question by default the size of the questions array 
+    blanks = answare_key.length;
+    // start evaluation of the answares
+    for (var z = 0; z < answare_key.length; z++) {
+        // here will compare if the question was answared and if exist
+        for (var w = 0; w < results.length; w++) {
+            var key = parseInt(results[w].name);
+            var val = results[w].value;
+            // corrects and incorrects counts
+            if (z == key) {
+                if (answare_key[z] == val) {
+                    corrects++;
+                    blanks--;
+                } else {
+                    incorrects++;
+                    blanks--;
+                }
+            }
+        }
+    }
+    return corrects, incorrects, blanks;
+}
+// ///////////////////////////////////////////
 
-
+function display_result(corrects, incorrects, blanks) {
+    // This will clean out the question container and also remove the clockdown
+    $("form").remove();
+    $("#clock-container").remove();
+    var answares_main_container = $("<div>");
+    answares_main_container.addClass("start");
+    answares_main_container.append("<h3>Corrects Answers: <span>" + corrects + "</span></h3>");
+    answares_main_container.append("<h3>Incorrect Answers: <span>" + incorrects + "</span></h3>");
+    answares_main_container.append("<h3>Questions leave blank: <span>" + blanks + "</span></h3>");
+    answares_main_container.append('<button id= reload class="btn btn-primary">Play Again</button>');
+    $(".result_container").append(answares_main_container);
+    $("#reload").on("click", function() {
+        location.reload();
+    })
+}
 
 ///Should be an array with the Questions , options , and correct answare, most like a object
 /// This part for loop to create the questions 
@@ -100,7 +150,7 @@ function start_trivia() {
     start();
     /////creation of the questions 
     for (var i = 0; i < questions.length; i++) {
-        var question_count = i + 1;
+        var question_count = i;
         var question_label = $("<div>");
         question_label.addClass("question");
         question_label.text(questions[i].quiz);
@@ -109,31 +159,36 @@ function start_trivia() {
         ////call the function to create the optional answares
         options(questions[i], question_count);
     }
+    $("form").append('<button id="sent" class="btn btn-primary">Submit</button>');
 }
 //////// Creating the Start Button////////
 var start_button = $("<button>");
 start_button.addClass("btn btn-default");
+start_button.attr("id", "start_button");
 start_button.text("PLAY!!!!");
 $("#start_button").html(start_button);
 //////////////////////////////////////////
 
 //Button created on the beginin , call the function to star the game//////// 
-$("button").on("click", function(event) {
+$("#start_button").on("click", function(event) {
     $("#start_end_container").remove();
+    //trivia start//
     start_trivia();
-    $(".question_container").append('<div></div><button id="submit" class="btn btn-primary">Submit</button></div>');
+    // the submit button is called
+    $("#sent").on("click", function(event) {
+        event.preventDefault();
+        results = $("form").serializeArray();
+        evaluate(questions, results);
+        display_result(corrects, incorrects, blanks);
+
+    });
 });
 /////////////////////////////////////
 
-
-$("#submit").on("click", function(event) {
-    event.preventDefault();
-    var value_answare = $('input[name="1"]:checked').val();
-    console.log(value_answare);
-
-});
-//Here the Trivia get started
 // start_trivia();
+
+//Here the Trivia get started
+
 ///This part to receive the answares
 
 
