@@ -66,33 +66,38 @@ function options(questions, num_question) {
 
 // Function Clock time ///////////////////
 function timeConverter(t) {
-
     var minutes = Math.floor(t / 60);
     var seconds = t - (minutes * 60);
-
     if (seconds < 10) {
         seconds = "0" + seconds;
     }
-
     if (minutes === 0) {
         minutes = "00";
     } else if (minutes < 10) {
         minutes = "0" + minutes;
     }
-
     return minutes + ":" + seconds;
 }
 
 function count() {
-    time--;
-    var converted = timeConverter(time);
-    $("#clock-container").html(converted);
+    // this function the clock and print the html
+    if (time > 0) {
+        time--;
+        var converted = timeConverter(time);
+        $("#clock-container").html(converted);
+    } else {
+        clearInterval(intervalId);
+        results = $("form").serializeArray();
+        evaluate(questions, results);
+        display_result(corrects, incorrects, blanks);
+
+    }
+
 }
 
 function start() {
     intervalId = setInterval(count, 1000);
 }
-
 // END FUNCTION CLOCKWATCH////////////////
 
 // Function Evaluate Answares
@@ -133,6 +138,7 @@ function display_result(corrects, incorrects, blanks) {
     $("#clock-container").remove();
     var answares_main_container = $("<div>");
     answares_main_container.addClass("start");
+    answares_main_container.append("<h1>Great Job</h1>");
     answares_main_container.append("<h3>Corrects Answers: <span>" + corrects + "</span></h3>");
     answares_main_container.append("<h3>Incorrect Answers: <span>" + incorrects + "</span></h3>");
     answares_main_container.append("<h3>Questions leave blank: <span>" + blanks + "</span></h3>");
